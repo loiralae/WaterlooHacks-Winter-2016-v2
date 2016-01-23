@@ -57,8 +57,7 @@ var io = require('socket.io')(server);
  */
 
 console.log('BEFORE MONGO CONNECT');
-//
-//'mongodb://heroku_p53fr611:ttmmvadib4imnmtoqrftj2mqqf@ds049925.mongolab.com:49925/heroku_p53fr611'
+
 mongoose.connect(process.env.MONGOLAB_URI); 
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
