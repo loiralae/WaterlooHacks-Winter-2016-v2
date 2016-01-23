@@ -92,7 +92,7 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
-    url: process.env.MONGODB || process.env.MONGOLAB_URI,
+    url: 'mongodb://heroku_p53fr611:ttmmvadib4imnmtoqrftj2mqqf@ds049925.mongolab.com:49925/heroku_p53fr611',
     autoReconnect: true
   })
 }));
