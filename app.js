@@ -58,7 +58,7 @@ var io = require('socket.io')(server);
 
 console.log('BEFORE MONGO CONNECT');
 
-mongoose.connect(process.env.MONGOLAB_URI); 
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://heroku_p53fr611:ttmmvadib4imnmtoqrftj2mqqf@ds049925.mongolab.com:49925/heroku_p53fr611'); 
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
@@ -92,7 +92,7 @@ app.use(session({
   saveUninitialized: true,
   secret: process.env.SESSION_SECRET,
   store: new MongoStore({
-    url: process.env.MONGOLAB_URI,
+    url: process.env.MONGOLAB_URI || 'mongodb://heroku_p53fr611:ttmmvadib4imnmtoqrftj2mqqf@ds049925.mongolab.com:49925/heroku_p53fr611',
     autoReconnect: true
   })
 }));
