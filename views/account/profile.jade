@@ -15,6 +15,14 @@ block content
       .col-sm-7
         input.form-control(type='text', name='name', id='name', value='#{user.profile.name}')
     .form-group
+      label.col-sm-3.control-label(for='nativeLang') Native Language
+      .col-sm-7
+        input.form-control(type='text', name='nativeLang', id='nativeLang', value='#{user.nativeLang}')
+    .form-group
+      label.col-sm-3.control-label(for='interestLang') Language of Interest
+      .col-sm-7
+        input.form-control(type='text', name='interestLang', id='interestLang', value='#{user.interestLang}')
+    .form-group
       label.col-sm-3.control-label(for='gender') Gender
       .col-sm-4
         label.radio.col-sm-4

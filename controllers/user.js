@@ -91,7 +91,9 @@ exports.postSignup = function(req, res, next) {
 
   var user = new User({
     email: req.body.email,
-    password: req.body.password
+    password: req.body.password,
+    nativeLang: req.body.nativeLang,
+    interestLang: req.body.interestLang
   });
 
   User.findOne({ email: req.body.email }, function(err, existingUser) {
@@ -133,6 +135,8 @@ exports.postUpdateProfile = function(req, res, next) {
       return next(err);
     }
     user.email = req.body.email || '';
+    user.nativeLang = req.body.nativeLang || '';
+    user.interestLang = req.body.interestLang || '';
     user.profile.name = req.body.name || '';
     user.profile.gender = req.body.gender || '';
     user.profile.location = req.body.location || '';

@@ -230,8 +230,9 @@ module.exports = app;
 
 io.on('connection', function(socket) {
   socket.emit('greet', { hello: 'Hey there browser!' });
-  socket.on('respond', function(data) {
+  socket.on('chat', function(data) {
     console.log(data);
+    socket.emit('chat', data);
   });
   socket.on('disconnect', function() {
     console.log('Socket disconnected');

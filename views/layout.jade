@@ -7,13 +7,6 @@ html
     meta(name='csrf-token', content=_csrf)
     title #{title} - Hackathon Starter
     link(rel='stylesheet', href='/css/main.css')
-    script(src='/socket.io/socket.io.js')
-    script.
-        var socket = io.connect(window.location.href);
-        socket.on('greet', function (data) {
-          console.log(data);
-          socket.emit('respond', { message: 'Hey there, server!' });
-        });
   body
     include partials/header
 
@@ -26,6 +19,18 @@ html
     script(src='/js/lib/jquery.min.js')
     script(src='/js/lib/bootstrap.min.js')
     script(src='/js/main.js')
+    script(src='/socket.io/socket.io.js')
+    script.
+        var socket = io.connect(window.location.href);
+        $('#chatForm').submit(function() {
+          var data = $('#m').val();
+          socket.emit('chat', data);
+          $('#m').val('');
+          return false;
+        });
+        socket.on('chat', function(data) {
+          $('#messages').append($('<li>').text(data));
+        });
 
     // Google Analytics: change UA-XXXXX-X to be your site's ID
     script.
