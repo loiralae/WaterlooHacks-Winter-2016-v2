@@ -55,11 +55,16 @@ var io = require('socket.io')(server);
 /**
  * Connect to MongoDB.
  */
+
+console.log('BEFORE MONGO CONNECT');
+
 mongoose.connect(process.env.MONGOLAB_URI); // process.env.MONGODB || 
 mongoose.connection.on('error', function() {
   console.log('MongoDB Connection Error. Please make sure that MongoDB is running.');
   process.exit(1);
 });
+
+console.log('AFTER MONGO CONNECT');
 
 /**
  * Express configuration.
