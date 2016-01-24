@@ -242,10 +242,20 @@ module.exports = app;
 
 var rooms = ['Lobby'];
 
+
 io.on('connection', function(socket) {
   
-  //var clients = io.sockets.clients();
-  //console.log(clients);
+
+  function hasMatch(newUser) {
+    var clients = io.sockets.clients('Lobby');
+    for (i in clients) {
+      if (newUser.native == i.interest && newUser.interest == i.native) {
+        rooms.push(newUser.email);
+        i.leave('Lobby');
+        return true;
+      } 
+    }
+  }
   
   socket.on('addUser', function(username) {
       console.log(username);
