@@ -233,12 +233,76 @@ server.listen(app.get('port'), function() {
 
 module.exports = app;
 
+
+
+
+// create a schema for chat
+var ChatSchema = mongoose.Schema({
+  created: Date,
+  content: String,
+  username: String,
+  room: String
+});
+
+// create a model from the chat schema
+var Chat = mongoose.model('Chat', ChatSchema);
+
+
 io.on('connection', function(socket) {
-  socket.emit('greet', { hello: 'Hey there browser!' });
+  var clients = io.sockets.clients();
+  console.log(clients);
+
+  //Globals
+  var defaultRoom = 'general';
+  var rooms = ["General"];
+
+  //Emit the rooms array
+  socket.emit('setup', {
+    rooms: rooms
+  });
+
+  //Listens for new user
+  socket.on('new user', function(data) {
+    data.room = defaultRoom;
+    //New user joins the default room
+    socket.join(defaultRoom);
+    //Tell all those in the room that a new user joined
+    io.in(defaultRoom).emit('user joined', data);
+  });
+
+  //Listens for switch room
+  socket.on('switch room', function(data) {
+    //Handles joining and leaving rooms
+    //console.log(data);
+    socket.leave(data.oldRoom);
+    socket.join(data.newRoom);
+    io.in(data.oldRoom).emit('user left', data);
+    io.in(data.newRoom).emit('user joined', data);
+
+  });
+
+  //Listens for a new chat message
+  socket.on('new message', function(data) {
+    //Create message
+    var newMsg = new Chat({
+      username: data.username,
+      content: data.message,
+      room: data.room.toLowerCase(),
+      created: new Date()
+    });
+
+    //Save it to database
+    newMsg.save(function(err, msg){
+      //Send message to those connected in the room
+      io.in(msg.room).emit('message created', msg);
+    });
+  });
+
   socket.on('chat', function(data) {
     console.log(data);
     socket.emit('chat', data);
   });
+
   socket.on('disconnect', function() {
     console.log('Socket disconnected');
   });
