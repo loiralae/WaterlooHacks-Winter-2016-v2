@@ -3,6 +3,7 @@ extends layout
 block content
   h1 Charades Chat
   p.lead A chatroom to play CharadeLingo.
+  p.user.profile.name
   ul#rooms
   form#roomForm(action="")
     input#roomname
@@ -10,4 +11,5 @@ block content
   ul#messages
   form#chatForm(action="")
     input#m(autocomplete="off")
+    input(type='hidden', name='userEmail', id='userEmail', value='#{user.email}')
     button Send

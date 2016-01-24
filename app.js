@@ -246,16 +246,17 @@ io.on('connection', function(socket) {
   
   //var clients = io.sockets.clients();
   //console.log(clients);
-/*
-  socket.on('adduser', function(username) {
+  
+  socket.on('addUser', function(username) {
+      console.log(username);
       socket.username = username;
       socket.room = 'Lobby';
       socket.join('Lobby');
-      socket.emit('updatechat', 'SERVER', 'you have connected to Lobby');
-      socket.broadcast.to('Lobby').emit('updatechat', 'SERVER', username + ' has connected to this room');
+      io.to('Lobby').emit('updatechat', 'SERVER', 'you have connected to Lobby');
+      socket.broadcast.to('Lobby').emit('updatechat', 'SERVER', socket.username + ' has connected to this room');
       socket.emit('updaterooms', rooms, 'Lobby');
   });
-
+/*
   socket.on('create', function(room) {
       rooms.push(room);
       socket.emit('updaterooms', rooms, socket.room);
@@ -282,7 +283,7 @@ io.on('connection', function(socket) {
       io.sockets.emit('updateusers', usernames);
       socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
       socket.leave(socket.room);
-  });
+  });*/
 
   //Listens for a new chat message
   socket.on('new message', function(data) {
@@ -300,7 +301,7 @@ io.on('connection', function(socket) {
       //io.in(msg.room).emit('message created', msg);
       socket.emit('message created', msg);
     });
-  }); */
+  }); 
 
   socket.on('chat', function(data) {
     console.log(data);
