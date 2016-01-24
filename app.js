@@ -240,98 +240,84 @@ server.listen(app.get('port'), function() {
 
 module.exports = app;
 
+var clients = [];
+
+var people = {};
+
 var rooms = ['Lobby'];
+
+var words = ['Apple', 'Orange', 'Sushi', 'Basketball'];
 
 
 io.on('connection', function(socket) {
+
+  function playGame(room, user1, user2) {
+    //incomplete!!
+    var word = words[Math.floor(Math.random() * 4)];
+    io.sockets.in(room).connected[user1.id].emit("chat", "You're the host! The word is: " + word);
+    io.sockets.in(room).connected[user2.id].emit("chat", "You're the guesser!");
+    io.sockets.in(room).emit('You have 60 seconds to play.');
+    people[user1.id].curWord = word;
+    people[user2.id].curWord = word;
+    setTimeout(function(){ alert('Time\'s up!')}, 60000);
+    
+  }
   
-  function hasMatch() {
-    var clients = io.sockets.clients('Lobby');
-    for (i in clients) {
-      if (socket.nativeL == i.interestL && socket.interestL == i.nativeL) {
-        var roomName = newUser.email;
+  function hasMatch(newUser) {
+    for (var i = 0; i < clients.length; ++i) {
+      var client = clients[i];
+      if (newUser.id === client.id) continue;
+      if (people[newUser.id].nativeLang === people[client.id].interestLang 
+        && people[newUser.id].interestLang === people[client.id].nativeLang
+        && people[client.id].room === 'Lobby') {
+        var roomName = people[newUser.id].email;
         rooms.push(roomName);
-        newUser.set('room', roomName);
-        i.set('room', roomName);
-        i.leave('Lobby');
+        people[newUser.id].room = roomName;
+        people[client.id].room = roomName;
+        client.leave('Lobby');
+        client.join(roomName);
         newUser.join(roomName);
-        i.join(roomName);
+        playGame(roomName, client, newUser);
         return true;
-      } 
+      }
     }
     return false;
   }
   
   socket.on('addUser', function(data) {
     console.log(data);
-    socket.set('name', data.profile.name);
-    socket.set('email', data.email);
-    socket.set('nativeL', data.nativeLang);
-    socket.set('interestL', data.interestLang);
+    clients.push(socket);
+    people[socket.id] = { email: data.email, nativeLang: data.nativeLang,
+      interestLang: data.interestLang, room: 'Lobby'
+    };
 
-    if (!hasMatch()) {
-      socket.set('room', 'Lobby');
+    if (!hasMatch(socket)) {
+      people[socket.id].room = 'Lobby';
+      console.log('no match');
+      console.log(people[socket.id].room);
       socket.join('Lobby');
     }
   });
 
-  socket.on('joinRoom', function(data) {
-    var host = socket;
-  });
-
   socket.on('chat', function(data) {
-  console.log(data);
-  io.sockets.emit('chat', data);
+    console.log(data);
+    var roomName = people[socket.id].room;
+    if (roomName == null) roomName = 'Lobby';
+    var curWord = people[socket.id].curWord;
+    if (curWord) {
+      // regex data for curWord
+    }
+    io.sockets.in(roomName).emit('chat', data);
   });
 
   socket.on('disconnect', function() {
-    socket.leave(socket.room);
+    if (people[socket.id] != null) {
+      var roomName = people[socket.id].room;
+      if (roomName == null) roomName = 'Lobby';
+      socket.leave(roomName);
+    }
     console.log('Socket disconnected');
   });
-
-/*
-
-
-  socket.on('sendchat', function(data) {
-      io.sockets["in"](socket.room).emit('updatechat', socket.username, data);
-  });
-
-  socket.on('switchRoom', function(newroom) {
-      var oldroom;
-      oldroom = socket.room;
-      socket.leave(socket.room);
-      socket.join(newroom);
-      socket.emit('updatechat', 'SERVER', 'you have connected to ' + newroom);
-      socket.broadcast.to(oldroom).emit('updatechat', 'SERVER', socket.username + ' has left this room');
-      socket.room = newroom;
-      socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username + ' has joined this room');
-      socket.emit('updaterooms', rooms, newroom);
-  });
-
-  socket.on('disconnect', function() {
-      delete usernames[socket.username];
-      io.sockets.emit('updateusers', usernames);
-      socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
-      socket.leave(socket.room);
-  });*/
-
-/*  //Listens for a new chat message
-  socket.on('new message', function(data) {
-    //Create message
-    var newMsg = new Chat({
-      username: data.username,
-      content: data.message,
-      room: data.room.toLowerCase(),
-      created: new Date()
-    });
-
-    //Save it to database
-    newMsg.save(function(err, msg){
-      //Send message to those connected in the room
-      //io.in(msg.room).emit('message created', msg);
-      socket.emit('message created', msg);
-    });
-  }); */
 
 
 });
