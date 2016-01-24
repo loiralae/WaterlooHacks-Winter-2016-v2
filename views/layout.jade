@@ -22,6 +22,7 @@ html
     script(src='/socket.io/socket.io.js')
     script.
         var socket = io.connect(window.location.href);
+        
         $('#chatForm').submit(function() {
           var data = $('#m').val();
           socket.emit('chat', data);

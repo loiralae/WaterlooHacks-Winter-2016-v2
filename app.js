@@ -245,41 +245,52 @@ var rooms = ['Lobby'];
 
 io.on('connection', function(socket) {
   
-
-  function hasMatch(newUser) {
+  function hasMatch() {
     var clients = io.sockets.clients('Lobby');
     for (i in clients) {
-      if (newUser.native == i.interest && newUser.interest == i.native) {
-        rooms.push(newUser.email);
+      if (socket.nativeL == i.interestL && socket.interestL == i.nativeL) {
+        var roomName = newUser.email;
+        rooms.push(roomName);
+        newUser.set('room', roomName);
+        i.set('room', roomName);
         i.leave('Lobby');
+        newUser.join(roomName);
+        i.join(roomName);
         return true;
       } 
     }
+    return false;
   }
   
   socket.on('addUser', function(data) {
-      console.log(data);
-      socket.username = data;
-      socket.set('name', data.profile.name);
-      socket.set('email', data.email);
-      socket.set('native', data.nativeLang);
-      socket.set('interest', data.interestLang);
+    console.log(data);
+    socket.set('name', data.profile.name);
+    socket.set('email', data.email);
+    socket.set('nativeL', data.nativeLang);
+    socket.set('interestL', data.interestLang);
 
+    if (!hasMatch()) {
+      socket.set('room', 'Lobby');
       socket.join('Lobby');
+    }
   });
 
+  socket.on('joinRoom', function(data) {
+    var host = socket;
+  });
+
+  socket.on('chat', function(data) {
+  console.log(data);
+  io.sockets.emit('chat', data);
+  });
+
+  socket.on('disconnect', function() {
+    socket.leave(socket.room);
+    console.log('Socket disconnected');
+  });
 
 /*
-      socket.room = 'Lobby';
-      io.to('Lobby').emit('updatechat', 'SERVER', 'you have connected to Lobby');
-      socket.broadcast.to('Lobby').emit('updatechat', 'SERVER', socket.username + ' has connected to this room');
-      socket.emit('updaterooms', rooms, 'Lobby');
 
-
-  socket.on('create', function(room) {
-      rooms.push(room);
-      socket.emit('updaterooms', rooms, socket.room);
-  });
 
   socket.on('sendchat', function(data) {
       io.sockets["in"](socket.room).emit('updatechat', socket.username, data);
@@ -304,7 +315,7 @@ io.on('connection', function(socket) {
       socket.leave(socket.room);
   });*/
 
-  //Listens for a new chat message
+/*  //Listens for a new chat message
   socket.on('new message', function(data) {
     //Create message
     var newMsg = new Chat({
@@ -320,16 +331,7 @@ io.on('connection', function(socket) {
       //io.in(msg.room).emit('message created', msg);
       socket.emit('message created', msg);
     });
-  }); 
-
-  socket.on('chat', function(data) {
-    console.log(data);
-    io.sockets.emit('chat', data);
-    });
-
-  socket.on('disconnect', function() {
-    console.log('Socket disconnected');
-  });
+  }); */
 
 
 });
