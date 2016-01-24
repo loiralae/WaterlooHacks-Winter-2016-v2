@@ -257,16 +257,25 @@ io.on('connection', function(socket) {
     }
   }
   
-  socket.on('addUser', function(username) {
-      console.log(username);
-      socket.username = username;
-      socket.room = 'Lobby';
+  socket.on('addUser', function(data) {
+      console.log(data);
+      socket.username = data;
+      socket.set('name', data.profile.name);
+      socket.set('email', data.email);
+      socket.set('native', data.nativeLang);
+      socket.set('interest', data.interestLang);
+
       socket.join('Lobby');
+  });
+
+
+/*
+      socket.room = 'Lobby';
       io.to('Lobby').emit('updatechat', 'SERVER', 'you have connected to Lobby');
       socket.broadcast.to('Lobby').emit('updatechat', 'SERVER', socket.username + ' has connected to this room');
       socket.emit('updaterooms', rooms, 'Lobby');
-  });
-/*
+
+
   socket.on('create', function(room) {
       rooms.push(room);
       socket.emit('updaterooms', rooms, socket.room);
