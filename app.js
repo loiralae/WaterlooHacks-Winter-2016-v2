@@ -287,29 +287,29 @@ io.on('connection', function(socket) {
   socket.on('addUser', function(data) {
     console.log(data);
     // gotta make sure user is logged in
-    if (data.email != undefined) {
-      clients.push(socket);
-      people[socket.id] = { email: data.email, nativeLang: data.nativeLang,
-        interestLang: data.interestLang, room: 'Lobby'
-      };
+    clients.push(socket);
+    people[socket.id] = { email: data.email, nativeLang: data.nativeLang,
+      interestLang: data.interestLang, room: 'Lobby'
+    };
 
-      if (!hasMatch(socket)) {
-        people[socket.id].room = 'Lobby';
-        console.log('no match');
-        console.log(people[socket.id].room);
-        socket.join('Lobby');
-      }
+    if (!hasMatch(socket)) {
+      people[socket.id].room = 'Lobby';
+      console.log('no match');
+      console.log(people[socket.id].room);
+      socket.join('Lobby');
     }
   });
 
   socket.on('chat', function(data) {
-    var roomName = people[socket.id].room;
-    if (roomName == null) roomName = 'Lobby';
-    var curWord = people[socket.id].curWord;
-    if (curWord) {
-      // regex data for curWord
+    if (people[socket.id] != null) {
+      var roomName = people[socket.id].room;
+      if (roomName == null) roomName = 'Lobby';
+      var curWord = people[socket.id].curWord;
+      if (curWord) {
+        // regex data for curWord
+      }
+      io.sockets.in(roomName).emit('chat', data);
     }
-    io.sockets.in(roomName).emit('chat', data);
   });
 
   socket.on('disconnect', function() {
