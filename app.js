@@ -287,7 +287,7 @@ io.on('connection', function(socket) {
   socket.on('addUser', function(data) {
     console.log(data);
     // gotta make sure user is logged in
-    if (data != null) {
+    if (data.email != undefined) {
       clients.push(socket);
       people[socket.id] = { email: data.email, nativeLang: data.nativeLang,
         interestLang: data.interestLang, room: 'Lobby'
