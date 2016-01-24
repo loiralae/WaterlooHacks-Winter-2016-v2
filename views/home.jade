@@ -1,6 +1,7 @@
 extends layout
 
 block content
+
   h1 Charades Chat
   p.lead A chatroom to play CharadeLingo.
   p.user.profile.name
@@ -13,3 +14,14 @@ block content
     input#m(autocomplete="off")
     input(type='hidden', name='userEmail', id='userEmail', value='#{user.email}')
     button Send
+
+//h1(style='text-align:center;') Charades Chat
+//p.lead(style='text-align:center;') A chatroom to play CharadeLingo.
+//table(style='width:100%;')
+//	th(style='width:33%;text-align:center;')
+//		button#achievements Achievements
+//	th(style='width:33%;text-align:center;')
+//		button#new-game New Game
+//	th(style='width:33%;text-align:center;')
+//		button#log-out Log Out
+
