@@ -235,19 +235,6 @@ server.listen(app.get('port'), function() {
 module.exports = app;
 
 
-
-
-// create a schema for chat
-var ChatSchema = mongoose.Schema({
-  created: Date,
-  content: String,
-  username: String,
-  room: String
-});
-
-// create a model from the chat schema
-var Chat = mongoose.model('Chat', ChatSchema);
-
 var rooms = ['Lobby'];
 
 io.on('connection', function(socket) {
