@@ -28,6 +28,7 @@ html
           $('#hist').val('');
           return false;
         });
+
         socket.on('chat', function(data) {
           $('#chatwindow').append($('<li>').text(data));
         });

@@ -244,22 +244,77 @@ var History = require('./models/History.js');
 
 io.on('connection', function(socket) {
   socket.emit('greet', { hello: 'Hey there browser!' });
-/*
+
   var User = require('./models/User');
     User.find(function(err, users) {
     console.log(users);
-  });*/
+
+var rooms = ['Lobby'];
+
+io.on('connection', function(socket) {
+  
+  //var clients = io.sockets.clients();
+  //console.log(clients);
+/*
+  socket.on('adduser', function(username) {
+      socket.username = username;
+      socket.room = 'Lobby';
+      socket.join('Lobby');
+      socket.emit('updatechat', 'SERVER', 'you have connected to Lobby');
+      socket.broadcast.to('Lobby').emit('updatechat', 'SERVER', username + ' has connected to this room');
+      socket.emit('updaterooms', rooms, 'Lobby');
+  });
+
+  socket.on('create', function(room) {
+      rooms.push(room);
+      socket.emit('updaterooms', rooms, socket.room);
+  });
+
+  socket.on('sendchat', function(data) {
+      io.sockets["in"](socket.room).emit('updatechat', socket.username, data);
+  });
+
+  socket.on('switchRoom', function(newroom) {
+      var oldroom;
+      oldroom = socket.room;
+      socket.leave(socket.room);
+      socket.join(newroom);
+      socket.emit('updatechat', 'SERVER', 'you have connected to ' + newroom);
+      socket.broadcast.to(oldroom).emit('updatechat', 'SERVER', socket.username + ' has left this room');
+      socket.room = newroom;
+      socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username + ' has joined this room');
+      socket.emit('updaterooms', rooms, newroom);
+  });
+
+  socket.on('disconnect', function() {
+      delete usernames[socket.username];
+      io.sockets.emit('updateusers', usernames);
+      socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+      socket.leave(socket.room);
+  });
+
+  //Listens for a new chat message
+  socket.on('new message', function(data) {
+    //Create message
+    var newMsg = new Chat({
+      username: data.username,
+      content: data.message,
+      room: data.room.toLowerCase(),
+      created: new Date()
+    });
+
+    //Save it to database
+    newMsg.save(function(err, msg){
+      //Send message to those connected in the room
+      //io.in(msg.room).emit('message created', msg);
+      socket.emit('message created', msg);
+    });
+  }); */
 
   socket.on('chat', function(data) {
     console.log(data);
-      
-    var hist = new History({
-      message: data
+    io.sockets.emit('chat', data);
     });
-    hist.save(function(err, histMsg) {});
-
-    socket.emit('chat', data);
-  });
 
   socket.on('disconnect', function() {
     console.log('Socket disconnected');
