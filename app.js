@@ -122,6 +122,10 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get('/', homeController.index);
+/**
+ * Chat history
+**/ 
+
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
@@ -138,6 +142,7 @@ app.post('/account/profile', passportConf.isAuthenticated, userController.postUp
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
+
 
 /**
  * API examples routes.
@@ -220,6 +225,7 @@ app.get('/auth/steam/callback', passport.authorize('openid', { failureRedirect: 
   res.redirect(req.session.returnTo || '/');
 });
 
+
 /**
  * Error Handler.
  */
@@ -234,14 +240,14 @@ server.listen(app.get('port'), function() {
 
 module.exports = app;
 
-
 var rooms = ['Lobby'];
 
 io.on('connection', function(socket) {
+  
   //var clients = io.sockets.clients();
   //console.log(clients);
-
-  /*socket.on('adduser', function(username) {
+/*
+  socket.on('adduser', function(username) {
       socket.username = username;
       socket.room = 'Lobby';
       socket.join('Lobby');
@@ -294,15 +300,17 @@ io.on('connection', function(socket) {
       //io.in(msg.room).emit('message created', msg);
       socket.emit('message created', msg);
     });
-  });*/
+  }); */
 
   socket.on('chat', function(data) {
     console.log(data);
     io.sockets.emit('chat', data);
-  });
+    });
 
   socket.on('disconnect', function() {
     console.log('Socket disconnected');
   });
+
+
 });
 
