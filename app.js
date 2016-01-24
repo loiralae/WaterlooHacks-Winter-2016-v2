@@ -250,8 +250,8 @@ var Chat = mongoose.model('Chat', ChatSchema);
 
 
 io.on('connection', function(socket) {
-  var clients = io.sockets.clients();
-  console.log(clients);
+  //var clients = io.sockets.clients();
+  //console.log(clients);
 
   //Globals
   var defaultRoom = 'general';
@@ -262,7 +262,7 @@ io.on('connection', function(socket) {
     rooms: rooms
   });
 
-  //Listens for new user
+/*  //Listens for new user
   socket.on('new user', function(data) {
     data.room = defaultRoom;
     //New user joins the default room
@@ -280,7 +280,7 @@ io.on('connection', function(socket) {
     io.in(data.oldRoom).emit('user left', data);
     io.in(data.newRoom).emit('user joined', data);
 
-  });
+  });*/
 
   //Listens for a new chat message
   socket.on('new message', function(data) {
@@ -295,7 +295,8 @@ io.on('connection', function(socket) {
     //Save it to database
     newMsg.save(function(err, msg){
       //Send message to those connected in the room
-      io.in(msg.room).emit('message created', msg);
+      //io.in(msg.room).emit('message created', msg);
+      socket.emit('message created', msg);
     });
   });
 

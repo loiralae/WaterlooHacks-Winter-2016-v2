@@ -23,7 +23,7 @@ html
     script.
         var socket = io.connect(window.location.href);
         $('#chatForm').submit(function() {
-          var data = { content: $('#m').val() };
+          var data = { message: $('#m').val() };
           data.username = 'test';
           data.room = 'general';
           socket.emit('new message', data);
