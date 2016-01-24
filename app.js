@@ -266,10 +266,10 @@ io.on('connection', function(socket) {
   function hasMatch(newUser) {
     for (var i = 0; i < clients.length; ++i) {
       var client = clients[i];
-      if (newUser.id === client.id) continue;
-      if (people[newUser.id].nativeLang === people[client.id].interestLang 
-        && people[newUser.id].interestLang === people[client.id].nativeLang
-        && people[client.id].room === 'Lobby') {
+      if (newUser.id == client.id) continue;
+      if (people[newUser.id].nativeLang == people[client.id].interestLang 
+        && people[newUser.id].interestLang == people[client.id].nativeLang
+        && people[client.id].room == 'Lobby') {
         var roomName = people[newUser.id].email;
         rooms.push(roomName);
         people[newUser.id].room = roomName;
@@ -286,21 +286,23 @@ io.on('connection', function(socket) {
   
   socket.on('addUser', function(data) {
     console.log(data);
-    clients.push(socket);
-    people[socket.id] = { email: data.email, nativeLang: data.nativeLang,
-      interestLang: data.interestLang, room: 'Lobby'
-    };
+    // gotta make sure user is logged in
+    if (data != null) {
+      clients.push(socket);
+      people[socket.id] = { email: data.email, nativeLang: data.nativeLang,
+        interestLang: data.interestLang, room: 'Lobby'
+      };
 
-    if (!hasMatch(socket)) {
-      people[socket.id].room = 'Lobby';
-      console.log('no match');
-      console.log(people[socket.id].room);
-      socket.join('Lobby');
+      if (!hasMatch(socket)) {
+        people[socket.id].room = 'Lobby';
+        console.log('no match');
+        console.log(people[socket.id].room);
+        socket.join('Lobby');
+      }
     }
   });
 
   socket.on('chat', function(data) {
-    console.log(data);
     var roomName = people[socket.id].room;
     if (roomName == null) roomName = 'Lobby';
     var curWord = people[socket.id].curWord;
