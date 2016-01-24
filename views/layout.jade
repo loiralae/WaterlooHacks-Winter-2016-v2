@@ -23,16 +23,14 @@ html
     script.
         var socket = io.connect(window.location.href);
         $('#chatForm').submit(function() {
-          var data = { message: $('#m').val() };
-          data.username = 'test';
-          data.room = 'general';
-          socket.emit('new message', data);
+          var data = $('#m').val();
+          socket.emit('chat', data);
           $('#m').val('');
           return false;
         });
 
-        socket.on('message created', function(data) {
-          $('#messages').append($('<li>').text(data.username + ': ' + data.content));
+        socket.on('chat', function(data) {
+          $('#messages').append($('<li>').text(data));
         });
 
     // Google Analytics: change UA-XXXXX-X to be your site's ID

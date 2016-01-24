@@ -248,39 +248,48 @@ var ChatSchema = mongoose.Schema({
 // create a model from the chat schema
 var Chat = mongoose.model('Chat', ChatSchema);
 
+var rooms = ['Lobby'];
 
 io.on('connection', function(socket) {
   //var clients = io.sockets.clients();
   //console.log(clients);
 
-  //Globals
-  var defaultRoom = 'general';
-  var rooms = ["General"];
-
-  //Emit the rooms array
-  socket.emit('setup', {
-    rooms: rooms
+  /*socket.on('adduser', function(username) {
+      socket.username = username;
+      socket.room = 'Lobby';
+      socket.join('Lobby');
+      socket.emit('updatechat', 'SERVER', 'you have connected to Lobby');
+      socket.broadcast.to('Lobby').emit('updatechat', 'SERVER', username + ' has connected to this room');
+      socket.emit('updaterooms', rooms, 'Lobby');
   });
 
-/*  //Listens for new user
-  socket.on('new user', function(data) {
-    data.room = defaultRoom;
-    //New user joins the default room
-    socket.join(defaultRoom);
-    //Tell all those in the room that a new user joined
-    io.in(defaultRoom).emit('user joined', data);
+  socket.on('create', function(room) {
+      rooms.push(room);
+      socket.emit('updaterooms', rooms, socket.room);
   });
 
-  //Listens for switch room
-  socket.on('switch room', function(data) {
-    //Handles joining and leaving rooms
-    //console.log(data);
-    socket.leave(data.oldRoom);
-    socket.join(data.newRoom);
-    io.in(data.oldRoom).emit('user left', data);
-    io.in(data.newRoom).emit('user joined', data);
+  socket.on('sendchat', function(data) {
+      io.sockets["in"](socket.room).emit('updatechat', socket.username, data);
+  });
 
-  });*/
+  socket.on('switchRoom', function(newroom) {
+      var oldroom;
+      oldroom = socket.room;
+      socket.leave(socket.room);
+      socket.join(newroom);
+      socket.emit('updatechat', 'SERVER', 'you have connected to ' + newroom);
+      socket.broadcast.to(oldroom).emit('updatechat', 'SERVER', socket.username + ' has left this room');
+      socket.room = newroom;
+      socket.broadcast.to(newroom).emit('updatechat', 'SERVER', socket.username + ' has joined this room');
+      socket.emit('updaterooms', rooms, newroom);
+  });
+
+  socket.on('disconnect', function() {
+      delete usernames[socket.username];
+      io.sockets.emit('updateusers', usernames);
+      socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+      socket.leave(socket.room);
+  });
 
   //Listens for a new chat message
   socket.on('new message', function(data) {
@@ -298,11 +307,11 @@ io.on('connection', function(socket) {
       //io.in(msg.room).emit('message created', msg);
       socket.emit('message created', msg);
     });
-  });
+  });*/
 
   socket.on('chat', function(data) {
     console.log(data);
-    socket.emit('chat', data);
+    io.sockets.emit('chat', data);
   });
 
   socket.on('disconnect', function() {
