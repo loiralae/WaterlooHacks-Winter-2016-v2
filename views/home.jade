@@ -1,13 +1,12 @@
 extends layout
 
 block content
-  h1 Charades Chat
-  p.lead A chatroom to play CharadeLingo.
-  ul#rooms
-  form#roomForm(action="")
-    input#roomname
-    button Create Room
-  ul#messages
-  form#chatForm(action="")
-    input#m(autocomplete="off")
-    button Send
+	h1(style='text-align:center;') Charades Chat
+	p.lead(style='text-align:center;') A chatroom to play CharadeLingo.
+	table(style='width:100%;')
+		th(style='width:33%;text-align:center;')
+			button#achievements Achievements
+		th(style='width:33%;text-align:center;')
+			button#new-game New Game
+		th(style='width:33%;text-align:center;')
+			button#log-out Log Out
