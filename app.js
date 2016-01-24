@@ -122,6 +122,10 @@ app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }))
  * Primary app routes.
  */
 app.get('/', homeController.index);
+/**
+ * Chat history
+**/ 
+
 app.get('/login', userController.getLogin);
 app.post('/login', userController.postLogin);
 app.get('/logout', userController.logout);
@@ -138,6 +142,7 @@ app.post('/account/profile', passportConf.isAuthenticated, userController.postUp
 app.post('/account/password', passportConf.isAuthenticated, userController.postUpdatePassword);
 app.post('/account/delete', passportConf.isAuthenticated, userController.postDeleteAccount);
 app.get('/account/unlink/:provider', passportConf.isAuthenticated, userController.getOauthUnlink);
+
 
 /**
  * API examples routes.
@@ -220,6 +225,7 @@ app.get('/auth/steam/callback', passport.authorize('openid', { failureRedirect: 
   res.redirect(req.session.returnTo || '/');
 });
 
+
 /**
  * Error Handler.
  */
@@ -234,14 +240,31 @@ server.listen(app.get('port'), function() {
 
 module.exports = app;
 
+var History = require('./models/History.js');
+
 io.on('connection', function(socket) {
   socket.emit('greet', { hello: 'Hey there browser!' });
+/*
+  var User = require('./models/User');
+    User.find(function(err, users) {
+    console.log(users);
+  });*/
+
   socket.on('chat', function(data) {
     console.log(data);
+      
+    var hist = new History({
+      message: data
+    });
+    hist.save(function(err, histMsg) {});
+
     socket.emit('chat', data);
   });
+
   socket.on('disconnect', function() {
     console.log('Socket disconnected');
   });
+
+
 });
 

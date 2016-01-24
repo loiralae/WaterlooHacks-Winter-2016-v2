@@ -3,7 +3,10 @@ extends layout
 block content
   h1 Charades Chat
   p.lead A chatroom to play CharadeLingo.
-  ul#messages
-  form#chatForm(action="")
-    input#m(autocomplete="off")
+  ul#chatwindow
+     each m in messages
+        li= m.message
+  form(id='chat-form')
+    input(type='hidden', name='_csrf', value=_csrf)
+    input(id='hist', name='hist', type='hist', autocomplete="off")
     button Send
