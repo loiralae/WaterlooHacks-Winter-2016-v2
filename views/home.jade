@@ -12,7 +12,7 @@ block content
   ul#messages
   form#chatForm(action="")
     input#m(autocomplete="off")
-    input(type='hidden', name='userEmail', id='userEmail', value='#{user.email}')
+    input(type='hidden', name='curUser', id='curUser', value='#{user}')
     button Send
 
 //h1(style='text-align:center;') Charades Chat
@@ -24,4 +24,3 @@ block content
 //		button#new-game New Game
 //	th(style='width:33%;text-align:center;')
 //		button#log-out Log Out
-

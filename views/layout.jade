@@ -29,8 +29,7 @@ html
           return false;
         });
 
-        var usr = $('#userEmail').val();
-        socket.emit('addUser', usr);
+        socket.emit('addUser', $('#curUser').val());
 
         socket.on('chat', function(data) {
           $('#messages').append($('<li>').text(data));
